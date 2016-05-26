@@ -1,0 +1,7 @@
+.slcache/
+test/
+.classpath
+.project
+target/
+.idea/
+
