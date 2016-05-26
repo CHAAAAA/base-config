@@ -18,7 +18,7 @@ class BaseConfigPropertyController {
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def index(Integer max, Integer offset) {
-        max = Math.min(max ?: 25, 100)
+        max = Math.min(max ?: 10, 100)
         offset = offset ?: 0
         def filters = grailsApplication.config.base.config.defaultFilter
 
@@ -58,7 +58,6 @@ class BaseConfigPropertyController {
         int upperLimit = findUpperIndex(offset, max, total)
         normalConfigProperties = normalConfigProperties.getAt(offset..upperLimit)
 
-        println(normalConfigProperties.size())
         [normalConfigProperties: normalConfigProperties, normalConfigPropertiesTotalSum: total]
     }
 

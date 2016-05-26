@@ -49,7 +49,6 @@ class BaseConfigProperty {
             objectString = isBasic ? "${customKey}=${customValue}" : "${customKey}='${customValue}'"
         }
 
-        println(objectString)
         ConfigObject configObject = new ConfigSlurper().parse(objectString)
         grailsApplication.config.merge(configObject)
     }
@@ -57,13 +56,12 @@ class BaseConfigProperty {
     def deleteConfigMap() {
         def previousValue = grailsApplication.flatConfig[customKey]?.toString()
         if (previousValue) {
-            Boolean useQuotes = !(DefaultGroovyMethods.isNumber(previousValue) || DefaultGroovyMethods.isFloat(previousValue) || previousValue in ['true', 'false'])
+            Boolean isBasic = DefaultGroovyMethods.isNumber(previousValue) || DefaultGroovyMethods.isFloat(previousValue) || previousValue in ['true', 'false']
             String objectString
-            if (customKey ==~ /(.*[^a-zA-Z0-9\.]+.*)/) {
-                objectString = "'''${customKey}=${previousValue}'''"
+            if (customValue ==~ /\[.*\]/) {
+                objectString = "${customKey}=${previousValue}"
             } else {
-//                objectString = useQuotes ? "${customKey}='''${previousValue}'''" : "${customKey}=${previousValue}"
-                objectString = useQuotes ? "${customKey}='''${previousValue}'''" : "${customKey}=${previousValue}"
+                objectString = isBasic ? "${customKey}=${customValue}" : "${customKey}='${customValue}'"
             }
 
             ConfigObject configObject = new ConfigSlurper().parse(objectString)
