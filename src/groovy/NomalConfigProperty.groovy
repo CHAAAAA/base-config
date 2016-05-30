@@ -9,7 +9,7 @@ class NormalConfigProperty {
     String configKey
     String configValue
 
-    Boolean isInDb
+    Boolean isInDb = false
     Long dbId
     String dbValue
 

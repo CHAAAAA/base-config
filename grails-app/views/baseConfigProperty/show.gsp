@@ -60,7 +60,12 @@
 							<dt><g:message code="baseConfigProperty.description.label" default="Description" /></dt> 
 							<dd><f:display bean="${baseConfigPropertyInstance}" property="description" /></dd> 
 							<div class="hr-line-dashed"></div>
-						</g:if> 
+						</g:if>
+						<g:if test="${baseConfigPropertyInstance?.configHolder}">
+							<dt><g:message code="baseConfigProperty.configHolder.label" default="ConfigHolder" /></dt>
+							<dd><f:display bean="${baseConfigPropertyInstance}" property="configHolder" /></dd>
+							<div class="hr-line-dashed"></div>
+						</g:if>
 					</dl>
 				</ui:block>
 			</div>

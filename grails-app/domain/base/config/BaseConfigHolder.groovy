@@ -15,4 +15,9 @@ class BaseConfigHolder {
         holderAlias nullable: true
         description nullable: true
     }
+
+    @Override
+    String toString() {
+        return this.holderName
+    }
 }

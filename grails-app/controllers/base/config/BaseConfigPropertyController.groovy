@@ -9,6 +9,7 @@ import grails.transaction.Transactional
 /**
  * 配置系统默认的过滤项
  * base.config.defaultFilter = ['grails.*', 'log4j.*', 'dataSource.*', 'hibernate.*']
+ *
  */
 class BaseConfigPropertyController {
 
@@ -79,19 +80,40 @@ class BaseConfigPropertyController {
     }
 
     def create() {
-        respond new BaseConfigProperty(params)
+        BaseConfigProperty baseConfigProperty = new BaseConfigProperty(params)
+        def holderList = BaseConfigHolder.list()
+        [baseConfigPropertyInstance: baseConfigProperty, holderList: holderList]
     }
 
     @Transactional
-    def save(BaseConfigProperty baseConfigPropertyInstance) {
-        if (baseConfigPropertyInstance == null) {
-            notFound()
-            return
+    def save() {
+        if (params?.customKey == '' || params?.customValue == '') {
+            grailsUiExtensions.displayFlashMessage(type: 'error', text: '缺少参数')
+            redirect(action: 'create', params: params)
         }
 
-        if (baseConfigPropertyInstance.hasErrors()) {
-            respond baseConfigPropertyInstance.errors, view: 'create'
-            return
+        BaseConfigProperty baseConfigPropertyInstance =
+                BaseConfigProperty.findByCustomKeyAndCustomValue(params.customKey, params.customValue)
+
+        if (baseConfigPropertyInstance) {
+            grailsUiExtensions.displayFlashMessage(type: 'error', text: '已存在')
+            redirect(action: 'create', params: params)
+        }
+        baseConfigPropertyInstance = new BaseConfigProperty()
+        baseConfigPropertyInstance.customKey = params.customKey
+        baseConfigPropertyInstance.customValue = params.customValue
+        baseConfigPropertyInstance.description = params?.description ?: null
+
+        if (params?.holder) {
+            if (params.holder == -1) {
+                baseConfigPropertyInstance.configHolder = null
+            } else {
+                BaseConfigHolder holder = BaseConfigHolder.get(params.getLong('holder'))
+                if (holder) {
+                    println(holder)
+                    baseConfigPropertyInstance.configHolder = holder
+                }
+            }
         }
 
         baseConfigPropertyInstance.save flush: true
@@ -112,20 +134,40 @@ class BaseConfigPropertyController {
             notFound()
             return
         }
+        def holderList = BaseConfigHolder.list()
 
-        respond baseConfigPropertyInstance
+        [baseConfigPropertyInstance: baseConfigPropertyInstance, holderList: holderList]
     }
 
     @Transactional
-    def update(BaseConfigProperty baseConfigPropertyInstance) {
-        if (baseConfigPropertyInstance == null) {
-            notFound()
-            return
+    def update(Long id) {
+
+        if (params.customKey == '' || params.customValue == '') {
+            grailsUiExtensions.displayFlashMessage(type: 'error', text: '缺少参数')
+            redirect(action: 'edit', id: id)
         }
 
-        if (baseConfigPropertyInstance.hasErrors()) {
-            respond baseConfigPropertyInstance.errors, view: 'edit'
-            return
+        BaseConfigProperty baseConfigPropertyInstance =
+                BaseConfigProperty.get(id)
+
+        if (!baseConfigPropertyInstance) {
+            grailsUiExtensions.displayMessage(type: 'error', text: '不存在')
+            redirect(action: 'index')
+        }
+        baseConfigPropertyInstance.customKey = params.customKey
+        baseConfigPropertyInstance.customValue = params.customValue
+        baseConfigPropertyInstance.description = params?.description ?: null
+
+        if (params?.holder) {
+            if (params.holder == -1) {
+                baseConfigPropertyInstance.configHolder = null
+            } else {
+                BaseConfigHolder holder = BaseConfigHolder.get(params.getLong('holder'))
+                if (holder) {
+                    println(holder)
+                    baseConfigPropertyInstance.configHolder = holder
+                }
+            }
         }
 
         baseConfigPropertyInstance.save flush: true
