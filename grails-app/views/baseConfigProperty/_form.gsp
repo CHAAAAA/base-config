@@ -2,6 +2,24 @@
 
 
 
+<div class="fieldcontain ${hasErrors(bean: baseConfigProperty, field: 'configHolder', 'error')} ">
+	<label for="configHolder">
+		<g:message code="baseConfigProperty.configHolder.label" default="Config Holder" />
+		
+	</label>
+	<g:select id="configHolder" name="configHolder.id" from="${base.config.BaseConfigHolder.list()}" optionKey="id" required="" value="${baseConfigProperty?.configHolder?.id}" class="many-to-one"/>
+
+</div>
+
+<div class="fieldcontain ${hasErrors(bean: baseConfigProperty, field: 'configType', 'error')} ">
+	<label for="configType">
+		<g:message code="baseConfigProperty.configType.label" default="Config Type" />
+		
+	</label>
+	<g:select name="configType" from="${base.config.ConfigType?.values()}" keys="${base.config.ConfigType.values()*.name()}" required="" value="${baseConfigProperty?.configType?.name()}" />
+
+</div>
+
 <div class="fieldcontain ${hasErrors(bean: baseConfigProperty, field: 'customKey', 'error')} ">
 	<label for="customKey">
 		<g:message code="baseConfigProperty.customKey.label" default="Custom Key" />

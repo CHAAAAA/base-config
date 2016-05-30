@@ -46,6 +46,16 @@
 				<ui:displayMessage />
 				<ui:block title="${message(code: 'default.show.label', args: [entityName])}">
 					<dl class="dl-horizontal"> 
+						<g:if test="${baseConfigPropertyInstance?.configHolder}">
+							<dt><g:message code="baseConfigProperty.configHolder.label" default="Config Holder" /></dt> 
+							<dd><g:link controller="baseConfigHolder" action="show" id="${baseConfigPropertyInstance?.configHolder?.id}"><f:display bean="${baseConfigProperty}Instance" property="configHolder" /></g:link></dd> 
+							<div class="hr-line-dashed"></div>
+						</g:if> 
+						<g:if test="${baseConfigPropertyInstance?.configType}">
+							<dt><g:message code="baseConfigProperty.configType.label" default="Config Type" /></dt> 
+							<dd><g:fieldValue bean="${baseConfigProperty}Instance" field="configType"/></dd> 
+							<div class="hr-line-dashed"></div>
+						</g:if> 
 						<g:if test="${baseConfigPropertyInstance?.customKey}">
 							<dt><g:message code="baseConfigProperty.customKey.label" default="Custom Key" /></dt> 
 							<dd><f:display bean="${baseConfigPropertyInstance}" property="customKey" /></dd> 
@@ -60,12 +70,7 @@
 							<dt><g:message code="baseConfigProperty.description.label" default="Description" /></dt> 
 							<dd><f:display bean="${baseConfigPropertyInstance}" property="description" /></dd> 
 							<div class="hr-line-dashed"></div>
-						</g:if>
-						<g:if test="${baseConfigPropertyInstance?.configHolder}">
-							<dt><g:message code="baseConfigProperty.configHolder.label" default="ConfigHolder" /></dt>
-							<dd><f:display bean="${baseConfigPropertyInstance}" property="configHolder" /></dd>
-							<div class="hr-line-dashed"></div>
-						</g:if>
+						</g:if> 
 					</dl>
 				</ui:block>
 			</div>

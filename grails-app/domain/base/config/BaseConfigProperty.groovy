@@ -7,15 +7,17 @@ class BaseConfigProperty {
     String customKey
     String customValue
     String description
+    ConfigType configType
 
     BaseConfigHolder configHolder
 
     static constraints = {
 
-        customKey nullable: false
+        customKey nullable: false, unique: true
         customValue nullable: false
         description nullable: true
         configHolder nullable: true
+        configType nullable: false
     }
 
 

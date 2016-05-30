@@ -1,3 +1,5 @@
+import base.config.BaseConfigArtefactHandler
+
 class BaseConfigGrailsPlugin {
     // the plugin version
     def version = "0.1"
@@ -5,7 +7,7 @@ class BaseConfigGrailsPlugin {
     def grailsVersion = "2.4 > *"
     // resources that are excluded from plugin packaging
     def pluginExcludes = [
-        "grails-app/views/error.gsp"
+            "grails-app/views/error.gsp"
     ]
 
     // TODO Fill in these fields
@@ -36,6 +38,11 @@ Brief summary/description of the plugin.
     // Online location of the plugin's browseable source code.
 //    def scm = [ url: "http://svn.codehaus.org/grails-plugins/" ]
 
+    def artefacts = [BaseConfigArtefactHandler]
+    def watchedResources = [
+            "file:./grails-app/base-config/*BaseConfig.groovy"
+    ]
+
     def doWithWebDescriptor = { xml ->
         // TODO Implement additions to web.xml (optional), this event occurs before
     }
@@ -56,6 +63,7 @@ Brief summary/description of the plugin.
         // TODO Implement code that is executed when any artefact that this plugin is
         // watching is modified and reloaded. The event contains: event.source,
         // event.application, event.manager, event.ctx, and event.plugin.
+
     }
 
     def onConfigChange = { event ->
