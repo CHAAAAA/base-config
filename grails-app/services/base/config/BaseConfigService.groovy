@@ -36,7 +36,7 @@ class BaseConfigService {
         return holder
     }
 
-    //如果配置项已经存在数据库中且 值的类型相同,以数据库中值为准!!!
+    //如果配置项已经存在数据库中,以数据库中值为准!!!
     def handleProperty(BaseConfigHolder holder, def k, def v) {
         if (v?.value && v?.type) {
             BaseConfigProperty baseConfigProperty = BaseConfigProperty.findByCustomKey(k)
@@ -47,32 +47,10 @@ class BaseConfigService {
                 baseConfigProperty.configType = v?.type
                 baseConfigProperty.configHolder = holder
                 baseConfigProperty.save(flush: true, failOnError: true)
-            } else if (baseConfigProperty.configType != v?.type) {
-                baseConfigProperty.customValue = v?.value
-                baseConfigProperty.configType = v?.type
-                baseConfigProperty.configHolder = holder
-                baseConfigProperty.save(flush: true, failOnError: true)
             }
 
-            String objectString = ''
+            baseConfigProperty.updateConfigMap()
 
-            switch (v.type) {
-                case ConfigType.BOOLEAN:
-
-                case ConfigType.INTEGER:
-                case ConfigType.LONG:
-                case ConfigType.MAP:
-                case ConfigType.LIST:
-                    objectString = "${k}=${baseConfigProperty.customValue}"
-                    break
-                case ConfigType.STRING:
-                    objectString = "${k}='${baseConfigProperty.customValue}'"
-                    break
-                default: objectString = "${k}=${baseConfigProperty.customValue}"
-            }
-
-            ConfigObject configObject = new ConfigSlurper().parse(objectString)
-            grailsApplication.config.merge(configObject)
         } else {
             log.debug("${holder?.holderBeanName} 配置文件 config值 格式有误, 缺少 'value' 或者 'type' 字段")
         }

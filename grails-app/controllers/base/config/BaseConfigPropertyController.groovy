@@ -7,12 +7,45 @@ import grails.transaction.Transactional
 class BaseConfigPropertyController {
 
     def grailsUiExtensions
+    static navigationScope = "app/wappSetting"
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-    def index(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
-        respond BaseConfigProperty.list(params), model:[baseConfigPropertyCount: BaseConfigProperty.count()]
+
+    def index() {
+        int max = Math.min(params.getInt('max') ?: 10, 100)
+        int offset = params.getInt('offset', 0)
+        def baseConfigHolderInstanceList = BaseConfigHolder.createCriteria().list(max: max, offset: offset) {
+            if (params.get('holderName')) {
+                or {
+                    ilike('holderName', '%' + params.get('holderName') + '%')
+                    ilike('holderBeanName', '%' + params.get('holderName') + '%')
+                }
+            }
+        }
+
+        [baseConfigHolderInstanceList : baseConfigHolderInstanceList,
+         baseConfigHolderInstanceCount: baseConfigHolderInstanceList.totalCount]
+    }
+
+    def propertyList(Long id) {
+        int max = Math.min(params.getInt('max') ?: 10, 100)
+        int offset = params.getInt('offset', 0)
+
+        BaseConfigHolder holder = BaseConfigHolder.get(id)
+        if (!holder) {
+            grailsUiExtensions.displayFlashMessage(type: 'error', text: '没有找到该应用')
+            redirect(action: 'index', params: params)
+        }
+
+        def baseConfigPropertyList = BaseConfigProperty.createCriteria().list(max: max, offset: offset) {
+            configHolder {
+                eq('id', id)
+            }
+        }
+
+        [baseConfigPropertyInstanceList: baseConfigPropertyList, baseConfigPropertyCount: baseConfigPropertyList.totalCount,
+         baseConfigHolderId            : id]
     }
 
     def show(BaseConfigProperty baseConfigPropertyInstance) {
@@ -36,12 +69,12 @@ class BaseConfigPropertyController {
         }
 
         if (baseConfigPropertyInstance.hasErrors()) {
-            respond baseConfigPropertyInstance.errors, view:'create'
+            respond baseConfigPropertyInstance.errors, view: 'create'
             return
         }
 
-        baseConfigPropertyInstance.save flush:true
-
+        baseConfigPropertyInstance.save flush: true
+        baseConfigPropertyInstance.updateConfigMap()
         request.withFormat {
             form multipartForm {
                 grailsUiExtensions.displayFlashMessage(type: 'info', text: 'default.created.message', args: [message(code: 'baseConfigProperty.label', default: 'BaseConfigProperty'), baseConfigPropertyInstance.id])
@@ -68,18 +101,18 @@ class BaseConfigPropertyController {
         }
 
         if (baseConfigPropertyInstance.hasErrors()) {
-            respond baseConfigPropertyInstance.errors, view:'edit'
+            respond baseConfigPropertyInstance.errors, view: 'edit'
             return
         }
 
-        baseConfigPropertyInstance.save flush:true
-
+        baseConfigPropertyInstance.save flush: true
+        baseConfigPropertyInstance.updateConfigMap()
         request.withFormat {
             form multipartForm {
                 grailsUiExtensions.displayFlashMessage(type: 'info', text: 'default.updated.message', args: [message(code: 'baseConfigProperty.label', default: 'BaseConfigProperty'), baseConfigPropertyInstance.id])
                 redirect baseConfigPropertyInstance
             }
-            '*'{ respond baseConfigPropertyInstance, [status: OK] }
+            '*' { respond baseConfigPropertyInstance, [status: OK] }
         }
     }
 
@@ -90,14 +123,14 @@ class BaseConfigPropertyController {
             return
         }
 
-        baseConfigPropertyInstance.delete flush:true
-
+        baseConfigPropertyInstance.delete flush: true
+        baseConfigPropertyInstance.deleteConfigMap()
         request.withFormat {
             form multipartForm {
                 grailsUiExtensions.displayFlashMessage(type: 'info', text: 'default.deleted.message', args: [message(code: 'baseConfigProperty.label', default: 'BaseConfigProperty'), baseConfigPropertyInstance.id])
-                redirect action:"index", method:"GET"
+                redirect action: "index", method: "GET"
             }
-            '*'{ render status: NO_CONTENT }
+            '*' { render status: NO_CONTENT }
         }
     }
 
@@ -107,7 +140,7 @@ class BaseConfigPropertyController {
                 grailsUiExtensions.displayFlashMessage(type: 'error', text: 'default.not.found.message', args: [message(code: 'baseConfigProperty.label', default: 'BaseConfigProperty'), params.id])
                 redirect action: "index", method: "GET"
             }
-            '*'{ render status: NOT_FOUND }
+            '*' { render status: NOT_FOUND }
         }
     }
 }

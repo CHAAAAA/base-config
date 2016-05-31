@@ -8,4 +8,5 @@ public enum ConfigType {
     BOOLEAN,
     MAP,
     LIST
+
 }

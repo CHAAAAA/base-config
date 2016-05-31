@@ -1,7 +1,7 @@
 package base.config
 
 class TestBaseConfig {
-    static name = 'TestInFile' //required
+    static name = '配置管理应用' //required
     static description = 'description IN file' //required
 
     static config = [
