@@ -17,7 +17,7 @@
             <a href="${createLink(uri: '/')}"><g:message code="default.home.label" default="Home"/></a>
         </li>
         <li>
-            <g:link action="index">${entityName}</g:link>
+            <g:link action="index">${message(code: 'baseConfigHolder.label')}</g:link>
         </li>
         <li class="active">
             <strong><g:message code="default.list.label" args="[entityName]"/></strong>
@@ -34,6 +34,7 @@
 <theme:zone name="content">
     <div class="col-lg-12">
         <ui:displayMessage/>
+        <g:render template="searchProperty"/>
         <ui:table class="table-bordered table-hover data-box">
             <thead>
             <ui:tr>

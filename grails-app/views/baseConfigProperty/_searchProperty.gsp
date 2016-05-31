@@ -1,4 +1,4 @@
-<g:form method="GET" action="propertyList" id="${}">
+<g:form method="GET" action="propertyList" id="${baseConfigHolderId}">
     <g:if test="${params.get('sort')}"><g:hiddenField name="sort" value="${params.get('sort')}"/></g:if>
     <g:if test="${params.get('order')}"><g:hiddenField name="order" value="${params.get('order')}"/></g:if>
 
@@ -29,10 +29,20 @@
                 <div class="col-sm-3">
                     <div class="form-group">
                         <label>
-                            <g:message code="baseConfigHolder.holderName.label"/>
+                            <g:message code="baseConfigProperty.customKey.label"/>
                         </label>
-                        <g:textField name="holderName" value="${params.get('holderName') ?: ''}" class="form-control"
-                                     placeholder="${message(code: 'baseConfigHolder.holderName.label')}"/>
+                        <g:textField name="customKey" value="${params.get('customKey') ?: ''}" class="form-control"
+                                     placeholder="${message(code: 'baseConfigProperty.customKey.label')}"/>
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>
+                            <g:message code="baseConfigProperty.customValue.label"/>
+                        </label>
+                        <g:textField name="customValue" value="${params.get('customValue') ?: ''}" class="form-control"
+                                     placeholder="${message(code: 'baseConfigProperty.customValue.label')}"/>
                     </div>
                 </div>
 
