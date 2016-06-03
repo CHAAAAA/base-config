@@ -25,11 +25,7 @@
     </ol>
 </theme:zone>
 <theme:zone name="header-actions">
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> af514f94ef5b264abce1b25d2159395ad232520c
 </theme:zone>
 
 <theme:zone name="content">
@@ -39,7 +35,6 @@
         <ui:table class="table-bordered table-hover data-box">
             <thead>
             <ui:tr>
-<<<<<<< HEAD
                 <ui:th class="col-xs-3">
                     <g:message code="baseConfigHolder.holderName.label" default="Holder Name"/>
                 </ui:th>
@@ -51,17 +46,6 @@
                 <ui:th class="col-xs-2">
                     <g:message code="default.operation.label" default="Operation"/>
                 </ui:th>
-=======
-                <ui:th>
-                    <g:message code="baseConfigHolder.holderName.label" default="Holder Name"/>
-                </ui:th>
-
-                <ui:th>
-                    <g:message code="baseConfigHolder.holderBeanName.label" default="Holder BeanName"/>
-                </ui:th>
-
-                <ui:th><g:message code="default.operation.label" default="Operation"/></ui:th>
->>>>>>> af514f94ef5b264abce1b25d2159395ad232520c
             </ui:tr>
             </thead>
             <tbody>
@@ -69,17 +53,10 @@
                 <ui:tr>
                     <td>
                         ${baseConfigHolderInstance?.holderName}
-<<<<<<< HEAD
                     </td>
                     <td>
                         ${baseConfigHolderInstance?.holderBeanName}
                     </td>
-=======
-                    </td>
-                    <td>
-                        ${baseConfigHolderInstance?.holderBeanName}
-                    </td>
->>>>>>> af514f94ef5b264abce1b25d2159395ad232520c
 
                     <td>
                         <ui:button kind="anchor" mode="success" class="btn-xs" action="propertyList"

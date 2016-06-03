@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 <g:form method="GET" action="propertyList" id="${baseConfigHolder.id}">
-=======
-<g:form method="GET" action="propertyList" id="${baseConfigHolderId}">
->>>>>>> af514f94ef5b264abce1b25d2159395ad232520c
     <g:if test="${params.get('sort')}"><g:hiddenField name="sort" value="${params.get('sort')}"/></g:if>
     <g:if test="${params.get('order')}"><g:hiddenField name="order" value="${params.get('order')}"/></g:if>
 

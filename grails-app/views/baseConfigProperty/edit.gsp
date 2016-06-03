@@ -38,25 +38,16 @@
             <ui:form action="update" id="${baseConfigPropertyInstance?.id}" method="PUT">
                 <g:hiddenField name="version" value="${baseConfigPropertyInstance?.version}"/>
                 <fieldset>
-<<<<<<< HEAD
                     <f:all bean="baseConfigPropertyInstance" except="configHolder,configType,customValue"/>
-=======
-                    <f:all bean="baseConfigPropertyInstance" except="configHolder,configType"/>
->>>>>>> af514f94ef5b264abce1b25d2159395ad232520c
                 </fieldset>
 
                 <div class="form-group ">
                     <label class="col-sm-2 control-label">
-<<<<<<< HEAD
                         <g:message code="baseConfigProperty.customValue.label"/>
-=======
-                        <g:message code="baseConfigProperty.configType.label"/>
->>>>>>> af514f94ef5b264abce1b25d2159395ad232520c
                     </label>
 
                     <div class="col-sm-5">
 
-<<<<<<< HEAD
                         <baseConfig:editConfigValue configProperty="${baseConfigPropertyInstance}"/>
                     </div>
                 </div>
@@ -95,20 +86,6 @@
                 </div>
 
                 <div class="hr-line-dashed"></div>
-=======
-                        <select class="form-control m-b" name="configType">
-                            <g:each in="${base.config.ConfigType}" var="ct">
-                                <g:if test="${baseConfigPropertyInstance?.configType == ct}">
-                                    <option selected>${ct}</option>
-                                </g:if>
-                                <g:else>
-                                    <option>${ct}</option>
-                                </g:else>
-                            </g:each>
-                        </select>
-                    </div>
-                </div>
->>>>>>> af514f94ef5b264abce1b25d2159395ad232520c
 
                 <ui:actions>
                     <ui:button kind="button" mode="primary">
