@@ -7,12 +7,12 @@ package base.config
 class BaseConfigHolder {
 
     String holderName
-    String holderAlias
+    String holderBeanName
     String description
 
     static constraints = {
         holderName nullable: false, unique: true
-        holderAlias nullable: true
+        holderBeanName nullable: false, unique: true
         description nullable: true
     }
 

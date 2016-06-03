@@ -17,7 +17,7 @@
             <a href="${createLink(uri: '/')}"><g:message code="default.home.label" default="Home"/></a>
         </li>
         <li>
-            <g:link action="index">${entityName}</g:link>
+            <g:link action="propertyList" id="${baseConfigPropertyInstance?.configHolder?.id}">${entityName}</g:link>
         </li>
         <li class="active">
             <strong><g:message code="default.edit.label" args="[entityName]"/></strong>
@@ -25,55 +25,67 @@
     </ol>
 </theme:zone>
 <theme:zone name="header-actions">
-    <ui:button kind="anchor" mode="default" action="index">
+    <g:link class="btn btn-default" action="propertyList" id="${baseConfigPropertyInstance?.configHolder?.id}">
         <i class="fa fa-arrow-circle-o-left"></i>
         <g:message code="default.button.return.label" default="Return"/>
-    </ui:button>
+    </g:link>
 </theme:zone>
 
 <theme:zone name="content">
     <div class="col-lg-12">
         <ui:displayMessage/>
-        <ui:block title="${message(code: 'default.edit.label', args: [entityName])}">
+        <ui:block title="${baseConfigPropertyInstance?.configHolder?.holderName}">
             <ui:form action="update" id="${baseConfigPropertyInstance?.id}" method="PUT">
                 <g:hiddenField name="version" value="${baseConfigPropertyInstance?.version}"/>
                 <fieldset>
-                    <f:all bean="baseConfigPropertyInstance" except="configHolder"/>
+                    <f:all bean="baseConfigPropertyInstance" except="configHolder,configType,customValue"/>
                 </fieldset>
 
-                <g:if test="${holderList && holderList.size() > 0}">
-                    <div class="form-group ">
+                <div class="form-group ">
+                    <label class="col-sm-2 control-label">
+                        <g:message code="baseConfigProperty.customValue.label"/>
+                    </label>
 
-                        <label class="col-sm-2 control-label">
-                            <g:message code="baseConfigProperty.configHolder.label" default="ConfigHolder"/>
-                        </label>
+                    <div class="col-sm-5">
 
-                        <div class="col-sm-5">
-                            <select class="form-control m-b" name="holder">
-                                <g:if test="${baseConfigPropertyInstance?.configHolder}">
-                                    <option value="${-1}">
-                                        <g:message code="baseConfigProperty.select.label" default="SELECT"/>
-                                    </option>
-                                </g:if>
-                                <g:else>
-                                    <option value="${-1}" selected>
-                                        <g:message code="baseConfigProperty.select.label" default="SELECT"/>
-                                    </option>
-                                </g:else>
+                        <baseConfig:editConfigValue configProperty="${baseConfigPropertyInstance}"/>
+                    </div>
+                </div>
 
-                                <g:each in="${holderList}" var="bch">
-                                    <g:if test="${baseConfigPropertyInstance?.configHolder?.id == bch?.id}">
-                                        <option value="${bch?.id}" selected>${bch?.holderName}</option>
+                <div class="form-group ">
+                    <label class="col-sm-2 control-label">
+                        <g:message code="baseConfigProperty.configType.label"/>
+                    </label>
+
+                    <div class="col-sm-5">
+
+                        <g:if test="${baseConfigPropertyInstance?.configType == base.config.ConfigType.GROUP}">
+                            <span class="label">GROUP</span>
+                            <input value="${baseConfigPropertyInstance?.configType}" name="configType"
+                                   style="visibility: hidden">
+                        </g:if>
+                        <g:elseif test="${baseConfigPropertyInstance?.configType == base.config.ConfigType.BOOLEAN}">
+                            <span class="label">BOOLEAN</span>
+                            <input value="${baseConfigPropertyInstance?.configType}" name="configType"
+                                   style="visibility: hidden">
+                        </g:elseif>
+                        <g:else>
+                            <select class="form-control m-b" name="configType">
+                                <g:each in="${base.config.ConfigType}" var="ct">
+                                    <g:if test="${baseConfigPropertyInstance?.configType == ct}">
+                                        <option selected value="${ct}">${ct}</option>
                                     </g:if>
-                                    <g:else>
-                                        <option value="${bch?.id}">${bch?.holderName}</option>
-                                    </g:else>
+                                    <g:elseif
+                                            test="${ct != base.config.ConfigType.GROUP && ct != base.config.ConfigType.BOOLEAN}">
+                                        <option value="${ct}">${ct}</option>
+                                    </g:elseif>
                                 </g:each>
                             </select>
-                        </div>
-
+                        </g:else>
                     </div>
-                </g:if>
+                </div>
+
+                <div class="hr-line-dashed"></div>
 
                 <ui:actions>
                     <ui:button kind="button" mode="primary">
@@ -81,42 +93,14 @@
                         <g:message code="default.button.update.label" default="Update"/>
                     </ui:button>
 
-                    <ui:button kind="button" mode="danger" id="delete-button">
-                        <i class="fa fa-trash"></i>
-                        <g:message code="default.button.delete.label" default="Delete"/>
-                    </ui:button>
+                    <g:link action="editGroup" class="btn btn-default" id="${baseConfigPropertyInstance?.id}">
+                        <i class="fa fa-edit"></i>
+                        <g:message code="baseConfigProperty.button.editgroup.label" default="Edit Group"/>
+                    </g:link>
+
                 </ui:actions>
             </ui:form>
         </ui:block>
-    </div>
-</theme:zone>
-<theme:zone name="modal">
-    <div class="modal inmodal fade" id="deleteModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <ui:button kind="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </ui:button>
-                    <i class="fa fa-warning fa-5x"></i>
-                    <h4 class="modal-title"><g:message code="default.button.delete.confirm.message"
-                                                       default="Are you sure?"/></h4>
-                </div>
-
-                <div class="modal-body">
-                    <p><strong><g:message code="modal.body.delete.message"/></strong></p>
-                </div>
-
-                <div class="modal-footer">
-                    <ui:form action="delete" id="${baseConfigPropertyInstance?.id}" method="DELETE">
-                        <ui:button kind="button" mode="default" data-dismiss="modal"><g:message
-                                code="default.button.cancle.label" default="Cancle"/></ui:button>
-                        <ui:button kind="button" mode="primary"><g:message code="default.button.delete.label"
-                                                                           default="Delete"/></ui:button>
-                    </ui:form>
-                </div>
-            </div>
-        </div>
     </div>
 </theme:zone>
 </body>

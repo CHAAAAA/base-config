@@ -1,21 +1,25 @@
 package base.config
 
-import org.codehaus.groovy.runtime.DefaultGroovyMethods
+import groovy.json.JsonSlurper
 
 class BaseConfigProperty {
 
+    String name
     String customKey
     String customValue
     String description
+    ConfigType configType
 
     BaseConfigHolder configHolder
 
     static constraints = {
 
-        customKey nullable: false
-        customValue nullable: false
+        customKey nullable: false, unique: true
+        customValue nullable: false, maxSize: 1024
         description nullable: true
-        configHolder nullable: true
+        configHolder nullable: false
+        name nullable: true
+        configType nullable: false
     }
 
 
@@ -24,29 +28,34 @@ class BaseConfigProperty {
         return "${customKey}:${customValue}"
     }
 
-    def beforeDelete = {
-        deleteConfigMap()
-        //CH.config.remove(key)
-    }
-
-    def beforeInsert = {
-        updateConfigMap()
-    }
-
-    def beforeUpdate = {
-        updateConfigMap()
-    }
-
     def grailsApplication
 
     def updateConfigMap() {
-        Boolean isBasic = DefaultGroovyMethods.isNumber(customValue) || DefaultGroovyMethods.isFloat(customValue) || customValue in ['true', 'false']
-
-        String objectString
-        if (customValue ==~ /\[.*\]/) {
-            objectString = "${customKey}=${customValue}"
-        } else {
-            objectString = isBasic ? "${customKey}=${customValue}" : "${customKey}='${customValue}'"
+        String objectString = ''
+        switch (configType) {
+            case ConfigType.BOOLEAN:
+            case ConfigType.INTEGER:
+            case ConfigType.LONG:
+            case ConfigType.MAP:
+            case ConfigType.LIST:
+                objectString = "${customKey}=${customValue}"
+                break
+            case ConfigType.STRING:
+                objectString = "${customKey}='${customValue}'"
+                break
+            case ConfigType.GROUP:
+                def configList = new JsonSlurper().parseText(customValue)
+                String defaultValue = configList['defaultValue']
+                def group = configList[defaultValue]
+                group.each { k, v ->
+                    if (ConfigType[v['type'].toString()] == ConfigType.STRING) {
+                        objectString += "\n${v['key']}='${v['value']}'"
+                    } else {
+                        objectString += "\n${v['key']}=${v['value']}"
+                    }
+                }
+                break
+            default: objectString = "${customKey}=${customValue}"
         }
 
         ConfigObject configObject = new ConfigSlurper().parse(objectString)
@@ -54,21 +63,6 @@ class BaseConfigProperty {
     }
 
     def deleteConfigMap() {
-        def previousValue = grailsApplication.flatConfig[customKey]?.toString()
-        if (previousValue) {
-            Boolean isBasic = DefaultGroovyMethods.isNumber(previousValue) || DefaultGroovyMethods.isFloat(previousValue) || previousValue in ['true', 'false']
-            String objectString
-            if (customValue ==~ /\[.*\]/) {
-                objectString = "${customKey}=${previousValue}"
-            } else {
-                objectString = isBasic ? "${customKey}=${customValue}" : "${customKey}='${customValue}'"
-            }
-
-            ConfigObject configObject = new ConfigSlurper().parse(objectString)
-            grailsApplication.config.merge(configObject)
-        } else {
-            grailsApplication.config.remove(customKey)
-        }
-
+        grailsApplication.config.remove(customKey)
     }
 }

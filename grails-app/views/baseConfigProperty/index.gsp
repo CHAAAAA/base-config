@@ -1,9 +1,9 @@
-<%@ page import="base.config.BaseConfigProperty" %>
+<%@ page import="base.config.BaseConfigHolder" %>
 <!DOCTYPE html>
 <html>
 <head>
     <theme:layout name="dataentry"/>
-    <g:set var="entityName" value="${message(code: 'baseConfigProperty.label', default: 'BaseConfigProperty')}"/>
+    <g:set var="entityName" value="${message(code: 'baseConfigHolder.label', default: 'BaseConfigHolder')}"/>
     <theme:title><g:message code="default.list.label" args="[entityName]" default="List"/></theme:title>
 </head>
 
@@ -25,74 +25,52 @@
     </ol>
 </theme:zone>
 <theme:zone name="header-actions">
-    <ui:button kind="anchor" mode="primary" action="create">
-        <i class="fa fa-plus-circle"></i>
-        <g:message code="default.button.create.label" default="Create"/>
-    </ui:button>
+
 </theme:zone>
 
 <theme:zone name="content">
     <div class="col-lg-12">
-
         <ui:displayMessage/>
+        <g:render template="searchHolder"/>
         <ui:table class="table-bordered table-hover data-box">
             <thead>
             <ui:tr>
-                <th>
-                    <g:message code="baseConfigProperty.type.label" default="Type"/>
-                </th>
-                <th>
-                    ${message(code: 'baseConfigProperty.customKey.label', default: 'Custom Key')}
-                </th>
-                <th>
-                    ${message(code: 'baseConfigProperty.customValue.label', default: 'Custom Value')}
-                </th>
-                <th>
+                <ui:th class="col-xs-3">
+                    <g:message code="baseConfigHolder.holderName.label" default="Holder Name"/>
+                </ui:th>
+
+                <ui:th class="col-xs-7">
+                    <g:message code="baseConfigHolder.holderBeanName.label" default="Holder BeanName"/>
+                </ui:th>
+
+                <ui:th class="col-xs-2">
                     <g:message code="default.operation.label" default="Operation"/>
-                </th>
+                </ui:th>
             </ui:tr>
             </thead>
             <tbody>
-            <g:each in="${normalConfigProperties}" status="i" var="normalConfigProperty">
+            <g:each in="${baseConfigHolderInstanceList}" status="i" var="baseConfigHolderInstance">
                 <ui:tr>
-                    <td class="col-xs-1">
-                        <g:if test="${normalConfigProperty?.isInDb}">
-                            <i class="fa fa-database"></i>
-                            <span class="label label-info">
-                                DB
-                            </span>
-                        </g:if>
-                        <g:else>
-                            <i class="fa fa-file-text"></i>
-                            <span class="label label-plain">
-                                FILE
-                            </span>
-                        </g:else>
+                    <td>
+                        ${baseConfigHolderInstance?.holderName}
                     </td>
-                    <td class="col-xs-4">${normalConfigProperty?.configKey}</td>
-                    <td class="col-xs-4">${normalConfigProperty?.configValue}</td>
-                    <td class="col-xs-3">
-                        <g:if test="${normalConfigProperty?.isInDb}">
-                            <g:link action="edit" id="${normalConfigProperty?.dbId}"
-                                    class="btn btn-primary btn-xs">
-                                <i class="fa fa-edit"></i>
-                                <g:message code="default.button.edit.label" default="Edit"/>
-                            </g:link>
-                        </g:if>
-                        <g:else>
-                            <g:link class="btn btn-primary btn-xs" action="create"
-                                    params="${[customKey: normalConfigProperty?.configKey]}">
-                                <i class="fa fa-paste"></i>
-                                <g:message code="default.button.overwrite.label" default="Overwrite"/>
-                            </g:link>
-                        </g:else>
+                    <td>
+                        ${baseConfigHolderInstance?.holderBeanName}
+                    </td>
+
+                    <td>
+                        <ui:button kind="anchor" mode="success" class="btn-xs" action="propertyList"
+                                   id="${baseConfigHolderInstance.id}">
+                            <i class="fa fa-gears"></i>
+                            <g:message code="default.button.manage.label" default="Manage"/>
+                        </ui:button>
                     </td>
                 </ui:tr>
             </g:each>
             </tbody>
         </ui:table>
         <div class="pull-right">
-            <ui:paginate total="${normalConfigPropertiesTotalSum ?: 0}" params="${params}"/>
+            <ui:paginate total="${baseConfigHolderInstanceCount ?: 0}" params="${params}"/>
         </div>
     </div>
 </theme:zone>
