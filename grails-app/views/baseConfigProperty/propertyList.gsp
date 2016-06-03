@@ -25,6 +25,10 @@
     </ol>
 </theme:zone>
 <theme:zone name="header-actions">
+    <ui:button kind="button" mode="danger" id="delete-button">
+        <i class="fa fa-trash"></i>
+        <g:message code="default.button.delete.label" default="Delete"/>
+    </ui:button>
 </theme:zone>
 
 <theme:zone name="content">
@@ -83,6 +87,36 @@
         </ui:table>
         <div class="pull-right">
             <ui:paginate total="${baseConfigPropertyCount ?: 0}" params="${params}"/>
+        </div>
+    </div>
+</theme:zone>
+<theme:zone name="modal">
+    <div class="modal inmodal fade" id="deleteModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <ui:button kind="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </ui:button>
+                    <i class="fa fa-warning fa-5x"></i>
+                    <h4 class="modal-title"><g:message code="default.button.delete.confirm.message"
+                                                       default="Are you sure?"/></h4>
+                </div>
+
+                <div class="modal-body">
+                    <p><strong><g:message code="modal.body.delete.message"/></strong></p>
+                </div>
+
+                <div class="modal-footer">
+                    <ui:form action="deleteHolder" id="${baseConfigHolder?.id}" method="DELETE">
+                        <ui:button kind="button" mode="default" data-dismiss="modal"><g:message
+                                code="default.button.cancle.label" default="Cancle"/></ui:button>
+
+                        <ui:button kind="button" mode="primary"><g:message code="default.button.delete.label"
+                                                                           default="Delete"/></ui:button>
+                    </ui:form>
+                </div>
+            </div>
         </div>
     </div>
 </theme:zone>

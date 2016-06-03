@@ -26,6 +26,12 @@ class BaseConfigPropertyController {
 //        println(config1)
 //        def config2 = grailsApplication.config.plugin.group.set2
 //        println(config2)
+//
+//        println(grailsApplication.config.plugin.wappSchoolCardDatalook.serviceUrl)
+//        println(grailsApplication.config.plugin.wappSchoolCardDatalook.ChargeServiceUrl)
+//        println(grailsApplication.config.plugin.wappSchoolCardDatalook.clientType)
+//        println(grailsApplication.config.plugin.wappSchoolCardDatalook.systemVersion)
+
     }
 
     def index() {
@@ -50,7 +56,7 @@ class BaseConfigPropertyController {
 
         BaseConfigHolder holder = BaseConfigHolder.get(id)
         if (!holder) {
-            grailsUiExtensions.displayFlashMessage(type: 'error', text: '没有找到该应用')
+            grailsUiExtensions.displayFlashMessage(type: 'error', code: 'baseConfigProperty.notfound.app.label')
             redirect(action: 'index', params: params)
         }
 
@@ -103,8 +109,29 @@ class BaseConfigPropertyController {
     }
 
     @Transactional
+    def updateGroup(Long id) {
+        BaseConfigProperty baseConfigProperty = BaseConfigProperty.get(id)
+        if (baseConfigProperty == null) {
+            notFound()
+            return
+        }
+
+        try {
+            def groupValue = new JsonSlurper().parseText(baseConfigProperty.customValue)
+            groupValue[params.groupname][params.setname]['value'] = params.configvalue
+            baseConfigProperty.customValue = JsonOutput.toJson(groupValue)
+            baseConfigProperty.save(flush: true, failOnError: true)
+            baseConfigProperty.updateConfigMap()
+        } catch (Exception e) {
+            grailsUiExtensions.displayFlashMessage(type: 'error', text: 'baseConfigProperty.error.format.label')
+        }
+
+        redirect(action: 'editGroup', id: id)
+    }
+
+    @Transactional
     def update(Long id) {
-        if (!params?.name || !params?.customKey || !params?.configType) {
+        if (!params?.name || !params?.configType) {
             grailsUiExtensions.displayFlashMessage(type: 'error', text: 'baseConfigProperty.lackOfInfo.label')
             respond BaseConfigProperty.get(id), view: 'edit'
             return
@@ -132,7 +159,6 @@ class BaseConfigPropertyController {
         def customValue = baseConfigPropertyInstance?.customValue
 
         baseConfigPropertyInstance.name = params?.name
-        baseConfigPropertyInstance.customKey = params?.customKey
         baseConfigPropertyInstance.configType = ConfigType[params?.configType]
 
 
@@ -158,6 +184,35 @@ class BaseConfigPropertyController {
             }
             '*' { respond baseConfigPropertyInstance, [status: OK] }
         }
+    }
+
+    @Transactional
+    def deleteHolder(BaseConfigHolder baseConfigHolderInstance) {
+        if (baseConfigHolderInstance == null) {
+            notFound()
+            return
+        }
+        BaseConfigProperty.findAllByConfigHolder(baseConfigHolderInstance).each {
+            it.deleteConfigMap()
+            it.delete(flush: true)
+        }
+
+        baseConfigHolderInstance.delete flush: true
+        grailsUiExtensions.displayFlashMessage(type: 'info', text: 'default.deleted.message', args: [message(code: 'baseConfigProperty.configHolder.label'), baseConfigHolderInstance.id])
+        redirect(action: 'index')
+    }
+
+    @Transactional
+    def deleteProperty(BaseConfigProperty baseConfigPropertyInstance) {
+        if (baseConfigPropertyInstance == null) {
+            notFound()
+            return
+        }
+        baseConfigPropertyInstance.deleteConfigMap()
+
+        baseConfigPropertyInstance.delete flush: true
+        grailsUiExtensions.displayFlashMessage(type: 'info', text: 'default.deleted.message', args: [message(code: 'baseConfigProperty.label'), baseConfigPropertyInstance.id])
+        redirect(action: 'propertyList', id: baseConfigPropertyInstance?.configHolder?.id)
     }
 
     protected void notFound() {

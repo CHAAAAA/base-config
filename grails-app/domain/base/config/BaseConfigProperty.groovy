@@ -63,6 +63,28 @@ class BaseConfigProperty {
     }
 
     def deleteConfigMap() {
-        grailsApplication.config.remove(customKey)
+        if (configType == ConfigType.GROUP) {
+            def configList = new JsonSlurper().parseText(customValue)
+            String defaultValue = configList['defaultValue']
+            def group = configList[defaultValue]
+            group.each { k, v ->
+                removeKey("${v['key']}")
+            }
+        } else {
+            removeKey(customKey)
+        }
+    }
+
+    def removeKey(String mkey) {
+        def firstKeys = mkey.split('\\.')
+        def lastKey = mkey.split('\\.')[mkey.split('\\.').length - 1]
+
+        def configMap = grailsApplication.config
+        firstKeys.each { String key ->
+            if (!key.equals(lastKey)) {
+                configMap = configMap[key]
+            }
+        }
+        configMap.remove(lastKey)
     }
 }

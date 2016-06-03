@@ -11,8 +11,6 @@ class BaseConfigService {
     def init() {
         log.info("自动注册baseConfig")
         def allHandler = grailsApplication.getArtefacts(BaseConfigArtefactHandler.TYPE)
-        def holderList = []
-        def propertyKeyList = []
         allHandler.each { artefact ->
             log.info("${artefact.name} - ${artefact.fullName}")
 
@@ -20,30 +18,13 @@ class BaseConfigService {
 
             String beanName = artefact.fullName.replace('.', '_')
             BaseConfigHolder holder = updateHolder(beanName, clazz)
-            holderList << holder
 
             def configScript = new ClosureScript(closure: GrailsClassUtils.getStaticFieldValue(clazz, 'config') as Closure)
             ConfigSlurper slurper = new ConfigSlurper()
             ConfigObject configs = slurper.parse(configScript)
 
             configs.keySet().each { String name ->
-                propertyKeyList << configs[name]['key']
                 handleProperty(holder, configs[name], name)
-            }
-        }
-
-        BaseConfigHolder.list().each { BaseConfigHolder holder ->
-            if (!holderList.contains(holder)) {
-                BaseConfigProperty.findAllByConfigHolder(holder).each { BaseConfigProperty property ->
-                    property.delete(flush: true)
-                }
-                holder.delete(flush: true)
-            }
-        }
-
-        BaseConfigProperty.list().each { BaseConfigProperty property ->
-            if (!propertyKeyList.contains(property.customKey)) {
-                property.delete(flush: true)
             }
         }
     }
@@ -62,7 +43,7 @@ class BaseConfigService {
 
     //如果配置项已经存在数据库中,以数据库中值为准!!!
     def handleProperty(BaseConfigHolder holder, def config, String name) {
-        if (config['key'] && config['type'] && config['value']) {
+        if (config['key'] && config['type']) {
             BaseConfigProperty baseConfigProperty = BaseConfigProperty.findByCustomKey(config['key'])
             if (!baseConfigProperty) {
                 baseConfigProperty = new BaseConfigProperty()
@@ -76,7 +57,7 @@ class BaseConfigService {
                 } else {
                     baseConfigProperty.customValue = config['value'].toString()
                 }
-                baseConfigProperty.configType = config['type']
+                baseConfigProperty.configType = config['type'] ?: ''
                 baseConfigProperty.configHolder = holder
                 baseConfigProperty.save(flush: true)
             }
