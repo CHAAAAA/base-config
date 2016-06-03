@@ -25,6 +25,13 @@
     </ol>
 </theme:zone>
 <theme:zone name="header-actions">
+<<<<<<< HEAD
+=======
+    <ui:button kind="anchor" mode="primary" action="create">
+        <i class="fa fa-plus-circle"></i>
+        <g:message code="default.button.create.label" default="Create"/>
+    </ui:button>
+>>>>>>> af514f94ef5b264abce1b25d2159395ad232520c
 </theme:zone>
 
 <theme:zone name="content">
@@ -34,6 +41,7 @@
         <ui:table class="table-bordered table-hover data-box">
             <thead>
             <ui:tr>
+<<<<<<< HEAD
                 <ui:th class="col-xs-1">
                     <g:message code="baseConfigProperty.name.label" default="Name"/>
                 </ui:th>
@@ -50,15 +58,33 @@
                 <ui:th class="col-xs-2">
                     <g:message code="default.operation.label" default="Operation"/>
                 </ui:th>
+=======
+                <ui:th><g:message code="baseConfigProperty.configHolder.label" default="Config Holder"/></ui:th>
+                <g:sortableColumn property="customKey"
+                                  title="${message(code: 'baseConfigProperty.customKey.label', default: 'Custom Key')}"/>
+                <g:sortableColumn property="customValue"
+                                  title="${message(code: 'baseConfigProperty.customValue.label', default: 'Custom Value')}"/>
+                <ui:th>
+                    <g:message code="baseConfigProperty.configType.label" default="Config Type"/>
+                </ui:th>
+                <ui:th><g:message code="default.operation.label" default="Operation"/></ui:th>
+>>>>>>> af514f94ef5b264abce1b25d2159395ad232520c
             </ui:tr>
             </thead>
             <tbody>
             <g:each in="${baseConfigPropertyInstanceList}" status="i" var="baseConfigPropertyInstance">
                 <ui:tr>
+<<<<<<< HEAD
                     <td><f:display bean="${baseConfigPropertyInstance}" property="name"/></td>
                     <td><f:display bean="${baseConfigPropertyInstance}" property="customKey"/></td>
                     <td>
                         <baseConfig:showConfigValue configProperty="${baseConfigPropertyInstance}"/>
+=======
+                    <td><f:display bean="${baseConfigPropertyInstance}" property="configHolder"/></td>
+                    <td><f:display bean="${baseConfigPropertyInstance}" property="customKey"/></td>
+                    <td>
+                        <f:display bean="${baseConfigPropertyInstance}" property="customValue"/>
+>>>>>>> af514f94ef5b264abce1b25d2159395ad232520c
                     </td>
                     <td>
                         <span class="badge badge-info">

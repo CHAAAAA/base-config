@@ -1,5 +1,6 @@
 package base.config
 
+<<<<<<< HEAD
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
@@ -7,6 +8,12 @@ import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
 
 @Transactional
+=======
+import static org.springframework.http.HttpStatus.*
+import grails.transaction.Transactional
+
+@Transactional(readOnly = true)
+>>>>>>> af514f94ef5b264abce1b25d2159395ad232520c
 class BaseConfigPropertyController {
 
     def grailsUiExtensions
@@ -14,6 +21,7 @@ class BaseConfigPropertyController {
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
+<<<<<<< HEAD
     def grailsApplication
 
     def test() {
@@ -28,6 +36,9 @@ class BaseConfigPropertyController {
 //        println(config2)
     }
 
+=======
+
+>>>>>>> af514f94ef5b264abce1b25d2159395ad232520c
     def index() {
         int max = Math.min(params.getInt('max') ?: 10, 100)
         int offset = params.getInt('offset', 0)
@@ -69,7 +80,11 @@ class BaseConfigPropertyController {
         }
 
         [baseConfigPropertyInstanceList: baseConfigPropertyList, baseConfigPropertyCount: baseConfigPropertyList.totalCount,
+<<<<<<< HEAD
          baseConfigHolder              : holder]
+=======
+         baseConfigHolderId            : id]
+>>>>>>> af514f94ef5b264abce1b25d2159395ad232520c
     }
 
     def show(BaseConfigProperty baseConfigPropertyInstance) {
@@ -81,6 +96,7 @@ class BaseConfigPropertyController {
         respond baseConfigPropertyInstance
     }
 
+<<<<<<< HEAD
 
     def edit(BaseConfigProperty baseConfigPropertyInstance) {
         if (baseConfigPropertyInstance == null) {
@@ -90,6 +106,8 @@ class BaseConfigPropertyController {
 
         respond baseConfigPropertyInstance
     }
+=======
+>>>>>>> af514f94ef5b264abce1b25d2159395ad232520c
 
     def editGroup(Long id) {
         BaseConfigProperty baseConfigProperty = BaseConfigProperty.get(id)
@@ -98,6 +116,7 @@ class BaseConfigPropertyController {
             return
         }
 
+<<<<<<< HEAD
         def groupConfig = new JsonSlurper().parseText(baseConfigProperty.customValue)
         [groupConfigList: groupConfig, baseConfigPropertyInstance: baseConfigProperty]
     }
@@ -142,8 +161,34 @@ class BaseConfigPropertyController {
             def groupValue = new JsonSlurper().parseText(customValue)
             groupValue['defaultValue'] = params?.groupValue
             baseConfigPropertyInstance.customValue = JsonOutput.toJson(groupValue)
+=======
+        respond baseConfigPropertyInstance
+    }
+
+    @Transactional
+    def update(BaseConfigProperty baseConfigPropertyInstance) {
+        if (baseConfigPropertyInstance == null) {
+            notFound()
+            return
         }
 
+        if (baseConfigPropertyInstance.hasErrors()) {
+            respond baseConfigPropertyInstance.errors, view: 'edit'
+            return
+        }
+
+        baseConfigPropertyInstance.save flush: true
+        baseConfigPropertyInstance.updateConfigMap()
+        request.withFormat {
+            form multipartForm {
+                grailsUiExtensions.displayFlashMessage(type: 'info', text: 'default.updated.message', args: [message(code: 'baseConfigProperty.label', default: 'BaseConfigProperty'), baseConfigPropertyInstance.id])
+                redirect baseConfigPropertyInstance
+            }
+            '*' { respond baseConfigPropertyInstance, [status: OK] }
+>>>>>>> af514f94ef5b264abce1b25d2159395ad232520c
+        }
+
+<<<<<<< HEAD
         if (baseConfigPropertyInstance.hasErrors()) {
             respond baseConfigPropertyInstance.errors, view: 'edit'
             return
@@ -160,6 +205,8 @@ class BaseConfigPropertyController {
         }
     }
 
+=======
+>>>>>>> af514f94ef5b264abce1b25d2159395ad232520c
     protected void notFound() {
         request.withFormat {
             form multipartForm {

@@ -40,7 +40,11 @@ Brief summary/description of the plugin.
 
     def artefacts = [BaseConfigArtefactHandler]
     def watchedResources = [
+<<<<<<< HEAD
             "file:./grails-app/mconfig/*BaseConfig.groovy"
+=======
+            "file:./grails-app/base-config/*BaseConfig.groovy"
+>>>>>>> af514f94ef5b264abce1b25d2159395ad232520c
     ]
 
     def doWithWebDescriptor = { xml ->

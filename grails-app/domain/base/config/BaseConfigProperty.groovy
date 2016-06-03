@@ -1,7 +1,10 @@
 package base.config
 
+<<<<<<< HEAD
 import groovy.json.JsonSlurper
 
+=======
+>>>>>>> af514f94ef5b264abce1b25d2159395ad232520c
 class BaseConfigProperty {
 
     String name
@@ -15,10 +18,16 @@ class BaseConfigProperty {
     static constraints = {
 
         customKey nullable: false, unique: true
+<<<<<<< HEAD
         customValue nullable: false, maxSize: 1024
         description nullable: true
         configHolder nullable: false
         name nullable: true
+=======
+        customValue nullable: false
+        description nullable: true
+        configHolder nullable: true
+>>>>>>> af514f94ef5b264abce1b25d2159395ad232520c
         configType nullable: false
     }
 
@@ -34,6 +43,10 @@ class BaseConfigProperty {
         String objectString = ''
         switch (configType) {
             case ConfigType.BOOLEAN:
+<<<<<<< HEAD
+=======
+
+>>>>>>> af514f94ef5b264abce1b25d2159395ad232520c
             case ConfigType.INTEGER:
             case ConfigType.LONG:
             case ConfigType.MAP:
@@ -43,6 +56,7 @@ class BaseConfigProperty {
             case ConfigType.STRING:
                 objectString = "${customKey}='${customValue}'"
                 break
+<<<<<<< HEAD
             case ConfigType.GROUP:
                 def configList = new JsonSlurper().parseText(customValue)
                 String defaultValue = configList['defaultValue']
@@ -55,6 +69,8 @@ class BaseConfigProperty {
                     }
                 }
                 break
+=======
+>>>>>>> af514f94ef5b264abce1b25d2159395ad232520c
             default: objectString = "${customKey}=${customValue}"
         }
 
